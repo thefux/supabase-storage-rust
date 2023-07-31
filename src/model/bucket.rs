@@ -36,6 +36,6 @@ pub struct BucketDetails {
 #[derive(Serialize)]
 pub struct BucketUpdate {
     pub public: bool,
-    pub file_size_limit: u32,
-    pub allowed_mime_types: Vec<String>,
+    pub file_size_limit: Option<u32>,
+    pub allowed_mime_types: Option<Vec<String>>,
 }

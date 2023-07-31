@@ -1,16 +1,23 @@
 use super::executor::Executor;
 use reqwest::{
     header::{HeaderMap, HeaderValue, IntoHeaderName},
-    Client, Error, Method, RequestBuilder, Response,
+    Body, Client, Error, Method, RequestBuilder, Response,
 };
+
 use url::Url;
+
+#[derive(Debug)]
+pub enum BodyType {
+    StringBody(String),
+    ReqwestBody(Body),
+}
 
 pub struct Builder {
     pub url: Url,
     pub headers: HeaderMap,
     pub client: Client,
     pub method: Method,
-    pub body: Option<String>,
+    pub body: Option<BodyType>,
 }
 
 impl Builder {
@@ -47,11 +54,26 @@ impl Builder {
     /// # Returns
     ///
     /// * `RequestBuilder` - The constructed `RequestBuilder` instance.
+    // pub fn build(self) -> RequestBuilder {
+    //     self.client
+    //         .request(self.method, self.url)
+    //         .headers(self.headers)
+    //         .body(self.body.unwrap_or_default())
+    // }
     pub fn build(self) -> RequestBuilder {
-        self.client
-            .request(self.method, self.url)
-            .headers(self.headers)
-            .body(self.body.unwrap_or_default())
+        let mut request = self
+            .client
+            .request(self.method, self.url.to_string())
+            .headers(self.headers);
+
+        if let Some(body) = self.body {
+            match body {
+                BodyType::StringBody(body_string) => request = request.body(body_string),
+                BodyType::ReqwestBody(reqwest_body) => request = request.body(reqwest_body),
+            }
+        }
+
+        request
     }
 
     /// Adds a new header to the request.
@@ -129,7 +151,7 @@ impl Builder {
     ///
     /// * `Executor` - The created `Executor` instance.
     pub fn create_executor(self) -> Executor {
-        Executor::new(self.method, self.url, self.client, self.headers)
+        Executor::new(self)
     }
 }
 

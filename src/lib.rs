@@ -13,9 +13,9 @@ use config::SupabaseConfig;
 
 /// A struct representing a Storage with an associated client and headers.
 pub struct Storage {
-    pub url: url::Url,
-    pub headers: HeaderMap,
-    pub client: Client,
+    url: url::Url,
+    headers: HeaderMap,
+    client: Client,
 }
 
 impl Storage {
@@ -60,11 +60,17 @@ impl Storage {
     /// ```
     pub fn new_with_config(config: SupabaseConfig) -> Self {
         let mut headers = HeaderMap::new();
-        headers.insert(
-            "Authorization",
-            HeaderValue::from_str(&format!("Bearer {}", config.supabase_api_key))
-                .expect("header value is invalid"),
-        );
+        if let Some(api_key) = config.supabase_api_key {
+            headers.insert(
+                "Authorization",
+                HeaderValue::from_str(&format!("Bearer {}", api_key))
+                    .expect("header value is invalid"),
+            );
+            headers.insert(
+                "apiKey",
+                HeaderValue::from_str(&format!("{}", api_key)).expect("header value is invalid"),
+            );
+        }
 
         Self {
             url: Url::parse(&config.supabase_url_storage).unwrap(),

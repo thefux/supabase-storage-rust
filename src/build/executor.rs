@@ -1,13 +1,11 @@
 use crate::model::errors;
-use reqwest::{header::HeaderMap, Client, Error, Method, RequestBuilder, Response, StatusCode};
+use reqwest::{Error, Response, StatusCode};
 use serde::Deserialize;
 
+use super::builder::Builder;
+
 pub struct Executor {
-    url: String,
-    method: Method,
-    client: Client,
-    headers: HeaderMap,
-    body: Option<String>,
+    pub builder: Builder,
 }
 
 impl Executor {
@@ -19,24 +17,8 @@ impl Executor {
     /// * `url` - The URL for the request.
     /// * `client` - The `Client` to use for making the request.
     /// * `headers` - The `HeaderMap` containing the headers for the request.
-    pub fn new<T>(method: Method, url: T, client: Client, headers: HeaderMap) -> Self
-    where
-        T: Into<String>,
-    {
-        Self {
-            url: url.into(),
-            method,
-            client,
-            headers,
-            body: None,
-        }
-    }
-
-    pub fn build(self) -> RequestBuilder {
-        self.client
-            .request(self.method, self.url.to_string())
-            .headers(self.headers)
-            .body(self.body.unwrap_or_default())
+    pub fn new(builder: Builder) -> Self {
+        Self { builder }
     }
 
     /// Executes the constructed HTTP request and returns the response as a `Result`.
@@ -74,7 +56,7 @@ impl Executor {
     /// }
     /// ```
     pub async fn execute(self) -> Result<Response, Error> {
-        self.build().send().await
+        self.builder.build().send().await
     }
 
     /// Executes the constructed HTTP request and deserializes the response body into a generic struct.
@@ -113,7 +95,7 @@ impl Executor {
     where
         T: for<'de> Deserialize<'de>,
     {
-        let response = self.build().send().await.unwrap();
+        let response = self.builder.build().send().await.unwrap();
         let status = response.status();
 
         let text = response.text().await.unwrap();

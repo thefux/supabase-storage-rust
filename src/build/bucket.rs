@@ -1,9 +1,11 @@
-use reqwest::Method;
+use reqwest::{header::HeaderValue, Method};
 
 use crate::{
     build::{builder::Builder, executor::Executor},
     model::bucket::{BucketUpdate, NewBucket},
 };
+
+use super::builder::BodyType;
 
 impl Builder {
     /// retrieve all buckets
@@ -61,7 +63,7 @@ impl Builder {
     pub fn create_bucket(mut self, body: &str) -> Executor {
         self.method = Method::POST;
         self.url.path_segments_mut().unwrap().push("bucket");
-        self.body = Some(body.into());
+        self.body = Some(BodyType::StringBody(body.into()));
         self.create_executor()
     }
 
@@ -94,7 +96,9 @@ impl Builder {
     pub fn create_bucket_from(mut self, body: NewBucket) -> Executor {
         self.method = Method::POST;
         self.url.path_segments_mut().unwrap().push("bucket");
-        self.body = Some(serde_json::to_string(&body).unwrap_or_default());
+        self.body = Some(BodyType::StringBody(
+            serde_json::to_string(&body).unwrap_or_default(),
+        ));
         self.create_executor()
     }
 
@@ -194,13 +198,15 @@ impl Builder {
     ///     .execute();
     /// ```
     pub fn update_bucket(mut self, bucket_id: &str, body: &str) -> Executor {
+        self.headers
+            .insert("Content-Type", HeaderValue::from_static("application/json"));
         self.method = Method::PUT;
         self.url
             .path_segments_mut()
             .unwrap()
             .push("bucket")
             .push(bucket_id);
-        self.body = Some(body.into());
+        self.body = Some(BodyType::StringBody(body.into()));
         self.create_executor()
     }
 
@@ -229,8 +235,8 @@ impl Builder {
     ///     .from()
     ///     .update_bucket_from("thefux", BucketUpdate {
     ///         public: false,
-    ///         file_size_limit: 0,
-    ///         allowed_mime_types: vec!["application/pdf".to_string()]
+    ///         file_size_limit: Some(0),
+    ///         allowed_mime_types: Some(vec!["application/pdf".to_string()]),
     ///     })
     ///     .execute();
     /// ```
@@ -241,7 +247,9 @@ impl Builder {
             .unwrap()
             .push("bucket")
             .push(bucket_id);
-        self.body = Some(serde_json::to_string(&body).unwrap_or_default());
+        self.body = Some(BodyType::StringBody(
+            serde_json::to_string(&body).unwrap_or_default(),
+        ));
         self.create_executor()
     }
 
