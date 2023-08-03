@@ -84,8 +84,7 @@ impl Executor {
     ///         .from()
     ///         .get_bucket_details("thefux")
     ///         .execute_from::<BucketDetails>()
-    ///         .await
-    ///         .unwrap();
+    ///         .await;
     ///
     ///     // Now 'response' contains the deserialized 'BucketDetails' based on the response.
     ///     println!("{:?}", response);
@@ -100,12 +99,15 @@ impl Executor {
 
         let text = response.text().await.unwrap();
 
-        if status == StatusCode::OK {
-            let result: T = serde_json::from_str(&text).unwrap();
-            Ok(result)
-        } else {
-            let error: errors::Error = serde_json::from_str(&text).unwrap();
-            Err(error)
+        match status {
+            StatusCode::OK => {
+                if let Ok(result) = serde_json::from_str(&text) {
+                    Ok(result)
+                } else {
+                    Err(serde_json::from_str(&text).unwrap())
+                }
+            }
+            _ => Err(serde_json::from_str(&text).unwrap()),
         }
     }
 }
