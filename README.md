@@ -2,7 +2,7 @@
 [![Workflow Status](https://github.com/thefux/supabase-storage-rust/actions/workflows/rust.yml/badge.svg)](https://github.com/thefux/supabase-storage-rust/actions/workflows/rust.yml/badge.svg?branch=main)
 
 
-# Supabase Storage Rust Client
+# Supabase Storage Client
 
 This is a Rust client library for interacting with Supabase Storage,
 allowing you to perform various operations such as uploading, downloading,
