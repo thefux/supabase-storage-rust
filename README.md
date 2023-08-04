@@ -4,15 +4,6 @@ This is a Rust client library for interacting with Supabase Storage,
 allowing you to perform various operations such as uploading, downloading,
 and managing files in your Supabase Storage bucket.
 
-## Installation
-
-Add the following line to your `Cargo.toml` file to include the library in your project:
-
-```toml
-[dependencies]
-storage-rs = "0.1.0"
-```
-
 ## Getting Started
 
 To use the Supabase Storage Rust client, you'll need to first create a `Storage` instance with your Supabase configuration.
