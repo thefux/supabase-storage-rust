@@ -13,7 +13,7 @@ and managing files in your Supabase Storage bucket.
 To use the Supabase Storage Rust client, you'll need to first create a `Storage` instance with your Supabase configuration.
 Make sure to set the required environment variables before using the client library. You can use `dotenv` to load the environment variables from a `.env` file.
 
-The SupabaseConfig assumes the presence of the environment variables SUPABASE_URL_STORAGE and SUPABASE_API_KEY, ensuring that both the authorization header and the base URL are appropriately configured.
+The SupabaseConfig assumes the presence of the variables SUPABASE_URL_STORAGE and SUPABASE_API_KEY, ensuring that both the authorization header and the base URL are appropriately configured.
 
 ```rust
 use supabase_storage::Storage;
