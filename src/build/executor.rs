@@ -30,7 +30,7 @@ impl Executor {
     /// # Example
     ///
     /// ```
-    /// use storage_rs::{
+    /// use supabase_storage::{
     ///     Storage,
     ///     config::SupabaseConfig,
     /// };
@@ -68,7 +68,7 @@ impl Executor {
     /// # Example
     ///
     /// ```
-    /// use storage_rs::{
+    /// use supabase_storage::{
     ///     Storage,
     ///     config::SupabaseConfig,
     ///     model::bucket::BucketDetails,

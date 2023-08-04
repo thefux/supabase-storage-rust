@@ -28,7 +28,7 @@ impl Storage {
     /// # Example
     ///
     /// ```
-    /// use storage_rs::Storage;
+    /// use supabase_storage::Storage;
     ///
     /// let _ = Storage::new("https://your_project_path/storage/v1");
     /// ```
@@ -51,7 +51,7 @@ impl Storage {
     ///
     /// # Example
     /// ```
-    /// use storage_rs::{Storage, config::SupabaseConfig};
+    /// use supabase_storage::{Storage, config::SupabaseConfig};
     /// use dotenv::dotenv;
     ///
     /// dotenv().ok();
@@ -83,7 +83,7 @@ impl Storage {
     ///
     /// # Example
     /// ```
-    /// use storage_rs::Storage;
+    /// use supabase_storage::Storage;
     ///
     /// let storage = Storage::new("https://your_project_path/storage/v1");
     /// let builder = storage.from();

@@ -12,8 +12,8 @@ Make sure to set the required environment variables before using the client libr
 The SupabaseConfig assumes the presence of the environment variables SUPABASE_URL_STORAGE and SUPABASE_API_KEY, ensuring that both the authorization header and the base URL are appropriately configured.
 
 ```rust
-use storage_rs::Storage;
-use storage_rs::config::SupabaseConfig;
+use supabase_storage::Storage;
+use supabase_storage::config::SupabaseConfig;
 use dotenv::dotenv;
 
 #[tokio::main]
@@ -31,7 +31,7 @@ Utilizing the SupabaseConfig struct isn't obligatory. Alternatively, you can man
 
 ```rust
 use reqwest::header::HeaderValue;
-use storage_rs::Storage;
+use supabase_storage::Storage;
 use serde::Deserialize;
 
 #[tokio::main]
@@ -62,8 +62,8 @@ async fn main() {
 To get a file to a bucket from Supabase Storage, you can use the `get_object` method of the `Storage` instance.
 
 ```rust
-use storage_rs::Storage;
-use storage_rs::config::SupabaseConfig;
+use supabase_storage::Storage;
+use supabase_storage::config::SupabaseConfig;
 use dotenv::dotenv;
 
 #[tokio::main]
@@ -93,8 +93,8 @@ You can also update an object in the bucket using the `update_object` method. Th
 The update method is only async for now.
 
 ```rust
-use storage_rs::Storage;
-use storage_rs::config::SupabaseConfig;
+use supabase_storage::Storage;
+use supabase_storage::config::SupabaseConfig;
 use dotenv::dotenv;
 
 #[tokio::main]
@@ -129,8 +129,8 @@ For those who prefer working with objects, rather than using the execute functio
 
 ```rust
 use dotenv::dotenv;
-use storage_rs::Storage;
-use storage_rs::config::SupabaseConfig;
+use supabase_storage::Storage;
+use supabase_storage::config::SupabaseConfig;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]

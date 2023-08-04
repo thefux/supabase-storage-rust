@@ -1,6 +1,6 @@
 use dotenv::dotenv;
-use storage_rs::config::SupabaseConfig;
-use storage_rs::Storage;
+use supabase_storage::config::SupabaseConfig;
+use supabase_storage::Storage;
 
 #[tokio::main]
 async fn main() {

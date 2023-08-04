@@ -35,7 +35,7 @@ impl Builder {
     ///
     /// # Example
     /// ```
-    /// use storage_rs::{
+    /// use supabase_storage::{
     ///     Storage,
     ///     config::SupabaseConfig,
     ///     model::bucket::NewBucket,
@@ -76,7 +76,7 @@ impl Builder {
     ///
     /// # Example
     /// ```
-    /// use storage_rs::{
+    /// use supabase_storage::{
     ///     Storage,
     ///     config::SupabaseConfig,
     ///     model::bucket::NewBucket,
@@ -150,7 +150,7 @@ impl Builder {
     ///
     /// # Example
     /// ```
-    /// use storage_rs::{
+    /// use supabase_storage::{
     ///     Storage,
     ///     config::SupabaseConfig,
     ///     model::bucket::NewBucket,
@@ -210,7 +210,7 @@ impl Builder {
     ///
     /// # Example
     /// ```
-    /// use storage_rs::{
+    /// use supabase_storage::{
     ///     Storage,
     ///     config::SupabaseConfig,
     ///     model::bucket::NewBucket,
