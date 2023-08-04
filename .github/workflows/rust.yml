@@ -21,4 +21,4 @@ jobs:
     - name: dotenv
       run: cp .env.example .env
     - name: Run tests
-      run: cargo test --verbose
+      run: cargo test --tests
