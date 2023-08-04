@@ -1,4 +1,5 @@
 [![Crates.io](https://img.shields.io/crates/v/supabase-storage.svg)](https://crates.io/crates/supabase-storage)
+[![Workflow Status](https://github.com/thefux/supabase-storage-rust/workflows/rust/badge.svg)](https://github.com/thefux/supabase-storage-rust/actions?branch=main)
 
 
 # Supabase Storage Rust Client
