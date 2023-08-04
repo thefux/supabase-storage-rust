@@ -1,5 +1,5 @@
 [package]
-name = "storage-rs"
+name = "supabase-storage"
 authors = ["tthefux@gmail.com"]
 version = "0.1.0"
 edition = "2021"
@@ -15,7 +15,6 @@ keywords = ["supabase-storage", "api"]
 
 [dependencies]
 reqwest = { version = "0.11", features = ["json", "stream"] }
-reqwest_mock = "0.7"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_qs = "0.12"
@@ -28,4 +27,3 @@ derive_more = "0.99"
 url = "2.4"
 mime_guess = "2.0"
 
-mockall = "0.11"

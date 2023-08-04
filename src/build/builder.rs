@@ -31,7 +31,7 @@ impl Builder {
     ///
     /// # Example
     /// ```
-    /// use storage_rs::build::builder::Builder;
+    /// use supabase_storage::build::builder::Builder;
     /// use reqwest::header::{HeaderMap, HeaderValue};
     /// use reqwest::Client;
     /// use url::Url;
@@ -90,7 +90,7 @@ impl Builder {
     /// # Example
     ///
     /// ```
-    /// use storage_rs::build::builder::Builder;
+    /// use supabase_storage::build::builder::Builder;
     /// use reqwest::header::{HeaderMap, HeaderValue};
     /// use reqwest::Client;
     /// use url::Url;
@@ -114,7 +114,7 @@ impl Builder {
     /// # Example
     ///
     /// ```
-    /// use storage_rs::build::builder::Builder;
+    /// use supabase_storage::build::builder::Builder;
     /// use reqwest::header::{HeaderMap, HeaderValue};
     /// use reqwest::Client;
     /// use url::Url;
