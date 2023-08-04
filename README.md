@@ -62,7 +62,7 @@ async fn main() {
 
 ## get a File
 
-To get a file to a bucket from Supabase Storage, you can use the `get_object` method of the `Storage` instance.
+To get a file from Supabase Storage, you can use the `get_object` method of the `Storage` instance.
 
 ```rust
 use supabase_storage::Storage;
@@ -92,7 +92,7 @@ async fn main() {
 
 ## Updating an Object
 
-You can also update an object in the bucket using the `update_object` method. This method allows you to move or copy an object from one location to another within the same bucket.
+You can also update an object in the bucket using the `update_object` method.
 The update method is only async for now.
 
 ```rust
