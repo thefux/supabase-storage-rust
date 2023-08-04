@@ -1,3 +1,6 @@
+[![Crates.io](https://img.shields.io/crates/v/supabase-storage.svg)](https://crates.io/crates/supabase-storage)
+
+
 # Supabase Storage Rust Client
 
 This is a Rust client library for interacting with Supabase Storage,
