@@ -223,6 +223,8 @@ impl Builder {
 
 #[cfg(test)]
 mod test {
+    use std::sync::{Arc, Mutex};
+
     use reqwest::{header::HeaderMap, Client, Method};
     use url::{Host, Origin};
 
@@ -235,13 +237,19 @@ mod test {
     fn test_copy_object() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .copy_object("thefux", "from", "to");
 
         assert_eq!(
-            executor.builder.headers.get("Content-Type").unwrap(),
+            executor
+                .builder
+                .headers
+                .lock()
+                .unwrap()
+                .get("Content-Type")
+                .unwrap(),
             "application/json"
         );
 
@@ -267,8 +275,8 @@ mod test {
     fn test_move_object() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .move_object("thefux", "from", "to");
 
@@ -279,8 +287,8 @@ mod test {
     fn test_move_object_from() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .move_object_from(MoveCopyObject {
             bucket_id: "thefux".to_string(),
@@ -304,8 +312,8 @@ mod test {
     fn test_copy_object_from() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .copy_object_from(MoveCopyObject {
             bucket_id: "thefux".to_string(),

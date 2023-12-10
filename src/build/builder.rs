@@ -37,9 +37,10 @@ impl Builder {
     /// use reqwest::header::{HeaderMap, HeaderValue};
     /// use reqwest::Client;
     /// use url::Url;
+    /// use std::sync::{Arc, Mutex};
     ///
     /// let url = Url::parse("http://localhost").unwrap();
-    /// let builder = Builder::new(url, HeaderMap::new(), Client::new());
+    /// let builder = Builder::new(url, Arc::new(Mutex::new(HeaderMap::new())), Arc::new(Mutex::new(Client::new())));
     /// ```
     pub fn new(url: Url, headers: Arc<Mutex<HeaderMap>>, client: Arc<Mutex<Client>>) -> Self {
         Self {
@@ -100,10 +101,11 @@ impl Builder {
     /// use reqwest::header::{HeaderMap, HeaderValue};
     /// use reqwest::Client;
     /// use url::Url;
+    /// use std::sync::{Arc, Mutex};
     ///
     /// let url = Url::parse("http://localhost").unwrap();
     ///
-    /// let _ = Builder::new(url, HeaderMap::new(), Client::new())
+    /// let _ = Builder::new(url, Arc::new(Mutex::new(HeaderMap::new())), Arc::new(Mutex::new(Client::new())))
     ///     .header("Authorization", HeaderValue::from_static("Bearer <token>"));
     /// ```
     pub fn header(self, key: impl IntoHeaderName, value: HeaderValue) -> Self {
@@ -124,6 +126,7 @@ impl Builder {
     /// use reqwest::header::{HeaderMap, HeaderValue};
     /// use reqwest::Client;
     /// use url::Url;
+    /// use std::sync::{Arc, Mutex};
     ///
     /// #[tokio::main]
     /// async fn main() {
@@ -131,7 +134,7 @@ impl Builder {
     ///     let mut headers = HeaderMap::new();
     ///     headers.insert("Authorization", HeaderValue::from_static("Bearer YOUR_ACCESS_TOKEN"));
     ///
-    ///     let builder = Builder::new(url, headers, Client::new())
+    ///     let builder = Builder::new(url, Arc::new(Mutex::new(headers)), Arc::new(Mutex::new(Client::new())))
     ///         .header("Authorization", HeaderValue::from_static("Bearer <token>"));
     ///
     ///     // Execute the request and handle the response
