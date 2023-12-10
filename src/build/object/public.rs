@@ -91,6 +91,8 @@ impl Builder {
 
 #[cfg(test)]
 mod test {
+    use std::sync::{Arc, Mutex};
+
     use reqwest::{header::HeaderMap, Client, Method};
     use url::{Host, Origin};
 
@@ -100,8 +102,8 @@ mod test {
     fn test_get_public_object() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .get_public_object("thefux", "test.pdf");
 
@@ -120,8 +122,8 @@ mod test {
     fn test_get_public_object_info() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .get_public_object_info("thefux", "test.pdf");
 

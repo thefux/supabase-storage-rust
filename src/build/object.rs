@@ -102,6 +102,8 @@ impl Builder {
     /// ```
     pub fn delete_objects(mut self, bucket_id: &str, body: &str) -> Executor {
         self.headers
+            .lock()
+            .unwrap()
             .insert("Content-Type", HeaderValue::from_static("application/json"));
         self.url
             .path_segments_mut()
@@ -159,6 +161,8 @@ impl Builder {
             .first_or_octet_stream()
             .to_string();
         self.headers
+            .lock()
+            .unwrap()
             .insert("Content-Type", HeaderValue::from_str(&mime).unwrap());
 
         self.url
@@ -295,6 +299,8 @@ impl Builder {
     /// ```
     pub fn download_object(mut self, bucket_id: &str) -> Executor {
         self.headers
+            .lock()
+            .unwrap()
             .insert("Content-Type", HeaderValue::from_static("application/json"));
         self.method = Method::POST;
         self.url
@@ -309,6 +315,7 @@ impl Builder {
 #[cfg(test)]
 mod test {
     use reqwest::{header::HeaderMap, Client};
+    use std::sync::{Arc, Mutex};
     use url::{Host, Origin};
 
     use crate::build::builder::Builder;
@@ -317,13 +324,19 @@ mod test {
     fn test_download_object() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .download_object("test_bucket");
 
         assert_eq!(
-            executor.builder.headers.get("Content-Type").unwrap(),
+            executor
+                .builder
+                .headers
+                .lock()
+                .unwrap()
+                .get("Content-Type")
+                .unwrap(),
             "application/json"
         );
         assert_eq!(executor.builder.url.path(), "/object/test_bucket");

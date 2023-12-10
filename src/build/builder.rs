@@ -1,3 +1,5 @@
+use std::sync::{Arc, Mutex};
+
 use super::executor::Executor;
 use reqwest::{
     header::{HeaderMap, HeaderValue, IntoHeaderName},
@@ -14,8 +16,8 @@ pub enum BodyType {
 
 pub struct Builder {
     pub url: Url,
-    pub headers: HeaderMap,
-    pub client: Client,
+    pub headers: Arc<Mutex<HeaderMap>>,
+    pub client: Arc<Mutex<Client>>,
     pub method: Method,
     pub body: Option<BodyType>,
 }
@@ -35,11 +37,12 @@ impl Builder {
     /// use reqwest::header::{HeaderMap, HeaderValue};
     /// use reqwest::Client;
     /// use url::Url;
+    /// use std::sync::{Arc, Mutex};
     ///
     /// let url = Url::parse("http://localhost").unwrap();
-    /// let builder = Builder::new(url, HeaderMap::new(), Client::new());
+    /// let builder = Builder::new(url, Arc::new(Mutex::new(HeaderMap::new())), Arc::new(Mutex::new(Client::new())));
     /// ```
-    pub fn new(url: Url, headers: HeaderMap, client: Client) -> Self {
+    pub fn new(url: Url, headers: Arc<Mutex<HeaderMap>>, client: Arc<Mutex<Client>>) -> Self {
         Self {
             url,
             headers,
@@ -61,10 +64,14 @@ impl Builder {
     //         .body(self.body.unwrap_or_default())
     // }
     pub fn build(self) -> RequestBuilder {
+        // let headers = self.headers.lock().unwrap();
+        let headers = Arc::try_unwrap(self.headers).unwrap();
         let mut request = self
             .client
+            .lock()
+            .unwrap()
             .request(self.method, self.url.to_string())
-            .headers(self.headers);
+            .headers(headers.into_inner().unwrap());
 
         if let Some(body) = self.body {
             match body {
@@ -94,14 +101,15 @@ impl Builder {
     /// use reqwest::header::{HeaderMap, HeaderValue};
     /// use reqwest::Client;
     /// use url::Url;
+    /// use std::sync::{Arc, Mutex};
     ///
     /// let url = Url::parse("http://localhost").unwrap();
     ///
-    /// let _ = Builder::new(url, HeaderMap::new(), Client::new())
+    /// let _ = Builder::new(url, Arc::new(Mutex::new(HeaderMap::new())), Arc::new(Mutex::new(Client::new())))
     ///     .header("Authorization", HeaderValue::from_static("Bearer <token>"));
     /// ```
-    pub fn header(mut self, key: impl IntoHeaderName, value: HeaderValue) -> Self {
-        self.headers.insert(key, value);
+    pub fn header(self, key: impl IntoHeaderName, value: HeaderValue) -> Self {
+        self.headers.lock().unwrap().insert(key, value);
         self
     }
 
@@ -118,6 +126,7 @@ impl Builder {
     /// use reqwest::header::{HeaderMap, HeaderValue};
     /// use reqwest::Client;
     /// use url::Url;
+    /// use std::sync::{Arc, Mutex};
     ///
     /// #[tokio::main]
     /// async fn main() {
@@ -125,7 +134,7 @@ impl Builder {
     ///     let mut headers = HeaderMap::new();
     ///     headers.insert("Authorization", HeaderValue::from_static("Bearer YOUR_ACCESS_TOKEN"));
     ///
-    ///     let builder = Builder::new(url, headers, Client::new())
+    ///     let builder = Builder::new(url, Arc::new(Mutex::new(headers)), Arc::new(Mutex::new(Client::new())))
     ///         .header("Authorization", HeaderValue::from_static("Bearer <token>"));
     ///
     ///     // Execute the request and handle the response
@@ -161,6 +170,7 @@ mod test {
         header::{HeaderMap, HeaderValue},
         Client,
     };
+    use std::sync::{Arc, Mutex};
     use url::Url;
 
     use super::Builder;
@@ -170,16 +180,24 @@ mod test {
         let mut headers = HeaderMap::new();
         headers.insert("Authorization", HeaderValue::from_static("Bearer test"));
         let url = Url::parse("http://localhost").unwrap();
-        let builder = Builder::new(url, headers, Client::new());
+        let builder = Builder::new(
+            url,
+            Arc::new(Mutex::new(headers)),
+            Arc::new(Mutex::new(Client::new())),
+        );
         assert_eq!(builder.url.scheme(), "http");
-        assert_eq!(builder.headers.len(), 1);
+        assert_eq!(builder.headers.lock().unwrap().len(), 1);
     }
 
     #[test]
     fn test_add_header() {
         let url = Url::parse("http://localhost").unwrap();
-        let builder = Builder::new(url, HeaderMap::new(), Client::new())
-            .header("Authorization", HeaderValue::from_static("Bearer test"));
-        assert_eq!(builder.headers.len(), 1);
+        let builder = Builder::new(
+            url,
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
+        )
+        .header("Authorization", HeaderValue::from_static("Bearer test"));
+        assert_eq!(builder.headers.lock().unwrap().len(), 1);
     }
 }

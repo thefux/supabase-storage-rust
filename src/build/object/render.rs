@@ -69,6 +69,7 @@ impl Builder {
 #[cfg(test)]
 mod test {
     use reqwest::{header::HeaderMap, Client, Method};
+    use std::sync::{Arc, Mutex};
     use url::{Host, Origin};
 
     use crate::{
@@ -82,8 +83,8 @@ mod test {
     fn test_get_object_with_transform() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .get_object_with_transform(
             "thefux",
