@@ -113,14 +113,14 @@ impl Builder {
         self.url(bucket_id, object);
 
         if let Some(cache_content) = file_options.cache_control {
-            self.headers.insert(
+            self.headers.lock().unwrap().insert(
                 "cache-control",
                 HeaderValue::from_str(&format!("max-age={}", cache_content)).unwrap(),
             );
         }
 
         if let Some(content_type) = file_options.content_type {
-            self.headers.insert(
+            self.headers.lock().unwrap().insert(
                 "content-type",
                 HeaderValue::from_str(&content_type).unwrap(),
             );
@@ -181,6 +181,8 @@ impl Builder {
             .first_or_octet_stream()
             .to_string();
         self.headers
+            .lock()
+            .unwrap()
             .insert("Content-Type", HeaderValue::from_str(&mime).unwrap());
 
         self.method = Method::PUT;
@@ -246,14 +248,14 @@ impl Builder {
         file_options: FileOptions,
     ) -> Executor {
         if let Some(cache_content) = file_options.cache_control {
-            self.headers.insert(
+            self.headers.lock().unwrap().insert(
                 "cache-control",
                 HeaderValue::from_str(&format!("max-age={}", cache_content)).unwrap(),
             );
         }
 
         if let Some(content_type) = file_options.content_type {
-            self.headers.insert(
+            self.headers.lock().unwrap().insert(
                 "content-type",
                 HeaderValue::from_str(&content_type).unwrap(),
             );
@@ -262,11 +264,13 @@ impl Builder {
                 .first_or_octet_stream()
                 .to_string();
             self.headers
+                .lock()
+                .unwrap()
                 .insert("Content-Type", HeaderValue::from_str(&mime).unwrap());
         }
 
         if let Some(upsert) = file_options.upsert {
-            self.headers.insert(
+            self.headers.lock().unwrap().insert(
                 "x-upsert",
                 HeaderValue::from_str(&upsert.to_string()).unwrap(),
             );
@@ -287,6 +291,7 @@ impl Builder {
 #[cfg(test)]
 mod test {
     use reqwest::{header::HeaderMap, Client, Method};
+    use std::sync::{Arc, Mutex};
     use url::{Host, Origin};
 
     use super::*;
@@ -295,8 +300,8 @@ mod test {
     fn test_create_signed_upload_url() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .create_signed_upload_url("thefux", "bitcoin.pdf");
 
@@ -315,8 +320,8 @@ mod test {
     async fn test_upload_to_signed_url_async() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .upload_to_signed_url_async(
             "thefux",

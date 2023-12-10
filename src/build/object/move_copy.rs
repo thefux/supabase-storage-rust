@@ -23,6 +23,8 @@ impl From<Action> for &str {
 impl Builder {
     pub(crate) fn action_intern(mut self, move_obj: MoveCopyObject, action: &str) -> Executor {
         self.headers
+            .lock()
+            .unwrap()
             .insert("Content-Type", HeaderValue::from_static("application/json"));
         self.method = Method::POST;
         self.url

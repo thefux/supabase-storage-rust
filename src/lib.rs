@@ -1,3 +1,5 @@
+use std::sync::{Arc, Mutex};
+
 use reqwest::{
     header::{HeaderMap, HeaderValue},
     Client,
@@ -68,7 +70,7 @@ impl Storage {
             );
             headers.insert(
                 "apiKey",
-                HeaderValue::from_str(&format!("{}", api_key)).expect("header value is invalid"),
+                HeaderValue::from_str(&api_key).expect("header value is invalid"),
             );
         }
 
@@ -89,6 +91,10 @@ impl Storage {
     /// let builder = storage.from();
     /// ```
     pub fn from(&self) -> Builder {
-        Builder::new(self.url.clone(), self.headers.clone(), self.client.clone())
+        Builder::new(
+            self.url.clone(),
+            Arc::new(Mutex::new(self.headers.clone())),
+            Arc::new(Mutex::new(self.client.clone())),
+        )
     }
 }

@@ -199,6 +199,8 @@ impl Builder {
     /// ```
     pub fn update_bucket(mut self, bucket_id: &str, body: &str) -> Executor {
         self.headers
+            .lock()
+            .unwrap()
             .insert("Content-Type", HeaderValue::from_static("application/json"));
         self.method = Method::PUT;
         self.url

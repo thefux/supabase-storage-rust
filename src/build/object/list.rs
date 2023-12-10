@@ -49,6 +49,8 @@ impl Builder {
     /// ```
     pub fn list_objects(mut self, bucket_id: &str, body: &str) -> Executor {
         self.headers
+            .lock()
+            .unwrap()
             .insert("Content-Type", HeaderValue::from_static("application/json"));
         self.method = Method::POST;
         self.url
@@ -66,6 +68,7 @@ impl Builder {
 #[cfg(test)]
 mod test {
     use reqwest::{header::HeaderMap, Client};
+    use std::sync::{Arc, Mutex};
     use url::{Host, Origin};
 
     use crate::build::builder::{BodyType, Builder};
@@ -74,13 +77,19 @@ mod test {
     fn test_list_objects() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .list_objects("test_bucket", r#"{"test": "body"}"#);
 
         assert_eq!(
-            executor.builder.headers.get("Content-Type").unwrap(),
+            executor
+                .builder
+                .headers
+                .lock()
+                .unwrap()
+                .get("Content-Type")
+                .unwrap(),
             "application/json"
         );
         assert_eq!(executor.builder.url.path(), "/object/list/test_bucket");

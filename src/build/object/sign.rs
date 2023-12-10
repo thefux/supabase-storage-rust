@@ -50,6 +50,8 @@ impl Builder {
     /// ```
     pub fn create_signed_url(mut self, bucket_name: &str, object: &str, body: &str) -> Executor {
         self.headers
+            .lock()
+            .unwrap()
             .insert("Content-Type", HeaderValue::from_static("application/json"));
         self.method = Method::POST;
         self.url
@@ -98,6 +100,8 @@ impl Builder {
     /// ```
     pub fn create_signed_urls(mut self, bucket_name: &str, body: &str) -> Executor {
         self.headers
+            .lock()
+            .unwrap()
             .insert("Content-Type", HeaderValue::from_static("application/json"));
         self.method = Method::POST;
         self.url
@@ -169,6 +173,7 @@ impl Builder {
 #[cfg(test)]
 mod test {
     use reqwest::{header::HeaderMap, Client, Method};
+    use std::sync::{Arc, Mutex};
     use url::{Host, Origin};
 
     use crate::build::builder::{BodyType, Builder};
@@ -177,8 +182,8 @@ mod test {
     fn test_get_object_with_signed_url() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .get_object_with_pre_assigned_url("thefux", "btc.pdf", "token");
 
@@ -195,8 +200,8 @@ mod test {
     fn test_create_signed_url() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .create_signed_url(
             "thefux",
@@ -245,8 +250,8 @@ mod test {
     fn test_create_signed_urls() {
         let executor = Builder::new(
             url::Url::parse("http://localhost").unwrap(),
-            HeaderMap::new(),
-            Client::new(),
+            Arc::new(Mutex::new(HeaderMap::new())),
+            Arc::new(Mutex::new(Client::new())),
         )
         .create_signed_urls("thefux", r#"{"paths":["btc.pdf","test.pdf"]}"#);
 
